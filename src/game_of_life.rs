@@ -159,7 +159,24 @@ mod tests {
         assert_eq!(after_two, start);
     }
 
-    // TODO (student): the glider test (after four generations on an empty grid the
-    // population is 5 and the shape has moved one row and one column along its
-    // direction of travel), and one more test of your own choosing.
+    // Expected cells worked out by hand: each glider cell moves down 1 row and right 1 column.
+    #[test]
+    fn glider_moves_one_down_one_right_after_four() {
+        let mut grid = load_pattern(3);
+        for _ in 0..4 {
+            grid = next_generation(&grid);
+        }
+        assert_eq!(population(&grid), 5);
+        let expected = grid_from(&[(2, 3), (3, 4), (4, 2), (4, 3), (4, 4)]);
+        assert_eq!(grid, expected);
+    }
+
+    // Catches a next_generation that updates the grid in place: (4,10) would die first,
+    // so (5,9) would see only 2 neighbors and never be born.
+    #[test]
+    fn vertical_blinker_turns_horizontal_after_one() {
+        let start = grid_from(&[(4, 10), (5, 10), (6, 10)]);
+        let expected = grid_from(&[(5, 9), (5, 10), (5, 11)]);
+        assert_eq!(next_generation(&start), expected);
+    }
 }
