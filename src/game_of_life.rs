@@ -1,11 +1,5 @@
-// Game of Life, Weeks 12-13: grid, display, neighbor counts, the rule for one cell,
-// generations, and preset patterns.
-//
-// TODO: remove the next line once every function below is used.
-#![allow(dead_code)]
-
-// TODO: add the imports you need (the pattern and generation prompts use
-// crate::input::read_int; waiting for Enter uses std::io).
+use crate::input::read_int;
+use std::io;
 
 const ROWS: usize = 10;
 const COLS: usize = 20;
@@ -51,14 +45,6 @@ pub fn next_state(alive: bool, neighbors: u8) -> bool {
     }
 }
 
-pub fn print_neighbor_counts(grid: &Grid) {
-    for r in 0..ROWS {
-        for c in 0..COLS {
-            print!("{}", count_neighbors(grid, r, c));
-        }
-        println!();
-    }
-}
 
 // The next generation. Read from `grid` and write to a NEW grid, so a cell is never
 // judged using neighbors that have already been updated.
@@ -104,23 +90,24 @@ pub fn population(grid: &Grid) -> usize {
     count
 }
 
-// TODO: replace this Week 12 version. New play(): show the pattern menu (1 blinker,
-// 2 block, 3 glider), ask how many generations, then print each generation with its
-// number and population, waiting for Enter between steps.
-pub fn play() {
-    let mut grid = new_grid();
-    grid[4][10] = true;
-    grid[5][10] = true;
-    grid[6][10] = true;
-    print_grid(&grid);
-    println!();
-    print_neighbor_counts(&grid);
-    println!();
-    let alive = grid[5][10];
-    let neighbors = count_neighbors(&grid, 5, 10);
-    println!("Center cell next generation: {}", if next_state(alive, neighbors) { "alive" } else { "dead" });
-}
 
+pub fn play() {
+    println!("1) Blinker  2) Block  3) Glider");
+    let choice = read_int("Which pattern? ", 1, 3);
+    let generations = read_int("How many generations? ", 1, 100);
+    let mut grid = load_pattern(choice);
+
+    for step in 0..=generations {
+        println!("Generation {}, population {}", step, population(&grid));
+        print_grid(&grid);
+        if step < generations {
+            println!("Press Enter for the next generation.");
+            let mut line = String::new();
+            io::stdin().read_line(&mut line).expect("Failed to read line");
+            grid = next_generation(&grid);
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
