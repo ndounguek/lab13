@@ -159,7 +159,6 @@ mod tests {
         assert_eq!(after_two, start);
     }
 
-    // Expected cells worked out by hand: each glider cell moves down 1 row and right 1 column.
     #[test]
     fn glider_moves_one_down_one_right_after_four() {
         let mut grid = load_pattern(3);
@@ -180,3 +179,4 @@ mod tests {
         assert_eq!(next_generation(&start), expected);
     }
 }
+
